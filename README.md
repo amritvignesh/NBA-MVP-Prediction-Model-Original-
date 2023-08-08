@@ -1,7 +1,7 @@
 # NBA MVP Prediction Models
 A Comparison Between Machine Learning and Logistic Regression Models Predicting the NBA MVP Winner Using Different Types of Statistics
 
-# Models:
+# Models
 1. Basic Statistics (PPG, APG, RPG, SPG, BPG, Wins)
 2. Advanced Statistics (PER, WS48, BPM, VORP)
 3. Basic & Advanced Statistics (above statistics combined
