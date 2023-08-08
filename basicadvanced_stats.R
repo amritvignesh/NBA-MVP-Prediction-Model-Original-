@@ -11,7 +11,7 @@ library(paletteer)
 
 basic_stats <- read.csv("basic_stats.csv")
 advanced_stats <- read.csv("advanced_stats.csv")
-basicadvanced_stats <- inner_join(advanced_stats, basic_stats, by=c('season'='yearSeason', 'player'='namePlayer'))
+basicadvanced_stats <- inner_join(advanced_stats, basic_stats, by=c('season'='yearSeason', 'player'='namePlayer')) # combining basic stats and advanced stats
 
 basicadvanced_stats <- basicadvanced_stats %>%
   mutate(mvp = mvp.y) %>%
@@ -20,10 +20,10 @@ basicadvanced_stats <- basicadvanced_stats %>%
   ungroup()
 
 basicadvanced_stats_train <- basicadvanced_stats %>%
-  filter(season != 2023)
+  filter(season != 2023) # train data from 2000 - 2022
 
 basicadvanced_stats_test <- basicadvanced_stats %>%
-  filter(season == 2023)
+  filter(season == 2023) # test data for 2023
 
 basicadvanced_reg <- glm(mvp ~ ppg + apg + rpg + spg + bpg + win + per + ws48 + bpm + vorp, data = basicadvanced_stats_train, family = binomial)
 summary(basicadvanced_reg)
@@ -77,7 +77,7 @@ t2022 = mvp_probability_train %>% filter(season == 2022) %>% filter(row_number()
 t2023 = mvp_probability_test %>% filter(season == 2023) %>% filter(row_number() <= 6)
 
 
-t2000 %>% gt() %>% # change the t value to the corresponding table above to output gt table and for 2023, add the title and subtitle
+t2023 %>% gt() %>% # change the t value to the corresponding table above to output gt table and for 2023, add the title and subtitle
   cols_align(
     align = "center",
     columns = c(player, team, season, mvp_prob, mvp_won)
@@ -97,4 +97,8 @@ t2000 %>% gt() %>% # change the t value to the corresponding table above to outp
     season = md("**Season**"),
     mvp_prob = md("**MVP Probability**"),
     mvp_won = md("**MVP Result**")
+  ) %>%
+  tab_header(
+    title = md("**2023 NBA MVP Probability**"),
+    subtitle = "Based on NBA MVP Data from 2000 - 2022 Involving Basic And Advanced Statistics"
   )
