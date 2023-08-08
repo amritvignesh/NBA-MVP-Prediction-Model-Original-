@@ -14,10 +14,10 @@ pbp <- game_logs(seasons = c(2000:2023))
 pbp %>% head()
 
 basic_stats <- pbp %>%
-  filter(minutes >= 20) %>%
+  filter(minutes >= 20) %>% # making condition of counting games with 20 minutes played 
   mutate(outcome = ifelse(outcomeGame == "W", 1, 0)) %>%
   group_by(yearSeason, namePlayer, nameTeam) %>%
-  filter(n() >= 41) %>%
+  filter(n() >= 41) %>% # making condition of having to play at least 41 games for consideration
   summarize(games = n(), ppg = mean(pts), apg = mean(ast), rpg = mean(treb), spg = mean(stl), bpg = mean(blk), win = sum(outcome))
 
 basic_stats <- basic_stats %>%
@@ -26,13 +26,16 @@ basic_stats <- basic_stats %>%
 
 write_csv(basic_stats, "basic_stats.csv")
 
+# IN THIS STEP, I HAD TO MANUALLY ENTER A BINARY VALUE FOR EITHER 0 OR 1 IN THE CSV FILE FOR ALL THE MVP WINNERS 
+# I SET THE WHOLE COLUMN TO 0 AND FOUND THE 24 MVP WINNERS MANUALLY AND CHANGED THE VALUE FROM 0 TO 1
+
 basic_stats <- read_csv("basic_stats.csv")
 
 basic_stats_train <- basic_stats %>%
-  filter(yearSeason != 2023)
+  filter(yearSeason != 2023) # train data from 2000 - 2022
 
 basic_stats_test <- basic_stats %>%
-  filter(yearSeason == 2023)
+  filter(yearSeason == 2023) # test data on 2023
 
 basic_reg <- glm(mvp ~ ppg + apg + rpg + spg + bpg + win, data = basic_stats_train, family = binomial)
 summary(basic_reg)

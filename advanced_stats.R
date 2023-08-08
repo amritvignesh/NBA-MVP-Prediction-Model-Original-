@@ -14,7 +14,7 @@ bref_players_stats(seasons = c(2000:2023), tables = "advanced", widen = TRUE, as
 
 advanced_stats <- dataBREFPlayerAdvanced %>%
   mutate(player = namePlayer, season = yearSeason + 1) %>%
-  filter(minutes >= 820) %>%
+  filter(minutes >= 820) %>% # created condition of playing at least 820 minutes (similar to basic stats as I just did 41 * 20 but it is not the same thing)
   group_by(season, player) %>%
   summarize(team = slugTeamsBREF, per = ratioPER, ws48 = ratioWSPer48, bpm = ratioBPM, vorp = ratioVORP)
 
@@ -24,13 +24,16 @@ advanced_stats <- advanced_stats %>%
 
 write_csv(advanced_stats, "advanced_stats.csv")
 
+# IN THIS STEP, I HAD TO MANUALLY ENTER A BINARY VALUE FOR EITHER 0 OR 1 IN THE CSV FILE FOR ALL THE MVP WINNERS 
+# I SET THE WHOLE COLUMN TO 0 AND FOUND THE 24 MVP WINNERS MANUALLY AND CHANGED THE VALUE FROM 0 TO 1
+
 advanced_stats <- read_csv("advanced_stats.csv")
 
 advanced_stats_train <- advanced_stats %>%
-  filter(season != 2023)
+  filter(season != 2023) # train data from 2000 - 2022
 
 advanced_stats_test <- advanced_stats %>%
-  filter(season == 2023)
+  filter(season == 2023) # test data on 2023
 
 advanced_reg <- glm(mvp ~ per + ws48 + bpm + vorp, data = advanced_stats_train, family = binomial)
 summary(advanced_reg)
@@ -84,7 +87,7 @@ t2022 = mvp_probability_train %>% filter(season == 2022) %>% filter(row_number()
 t2023 = mvp_probability_test %>% filter(season == 2023) %>% filter(row_number() <= 6)
 
 
-t2001 %>% gt() %>%
+t2021 %>% gt() %>%
   cols_align(
     align = "center",
     columns = c(player, team, season, mvp_prob, mvp_won)
